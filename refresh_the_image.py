@@ -5,21 +5,27 @@ import pandas as pd
 import time
 
 
-def refresh_the_img(list_img, list_degree):
-    for i in range(0, len(list_img)):
-        list_img[i] = list_img[i] % list_degree[i]
-    return list_img
+def refresh_the_img(img, degree):
+    # for single image, both 'img' and 'degree' are vectors
+    # ADD Exception HANDLING WAYS HERE
+    for i in range(0, len(img)):
+        img[i] = img[i] % degree[i]
+    return img
 
 
-def compute_the_average(img):
-    new_img = []
-    for i in range(0, len(img[0])):
-        vec_sum = 0
-        for j in range(0, len(img)):
-            vec_sum += img[j][i]
-        vec_sum_ave = vec_sum / len(img)
-        new_img.append(vec_sum_ave)
-    return new_img
+def get_average(img_list):
+    # Image in list SHOULD BE vectors, not origin image in ndarray type
+    if img_list is None:
+        raise RuntimeError("Average Error: no image in list")
+    ave_img = []
+    img_size = len(img_list[0])
+    for i in range(img_size):
+        px_sum = 0
+        for j in range(len(img_list)):
+            px_sum += img_size[j][i]
+        px_ave = px_sum / len(img_list)
+        ave_img.append(px_ave)
+    return ave_img
 
 
 def make_standard_image(train_path, train_start, train_end, network):
@@ -31,7 +37,7 @@ def make_standard_image(train_path, train_start, train_end, network):
         new_image_vector = refresh_the_img(image_vector, degree_vector)
         refreshed_image.append(new_image_vector)
     print("finished")
-    standard_image = compute_the_average(refreshed_image)
+    standard_image = get_average(refreshed_image)
     return standard_image
 
 
