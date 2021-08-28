@@ -21,7 +21,7 @@ def make_the_class_dic(data_list, labels_list):
     if isinstance(labels_list, np.ndarray):
         labels_list = labels_list.tolist()
     elif type(labels_list) is not np.ndarray or list:
-        raise RuntimeError('Wrong type label list')
+        raise RuntimeError("Reading Error, Not an array image.")
     if (data_list is None) or (labels_list is None):
         raise RuntimeError('Have blank list')
     labels_list = enumerate(labels_list)

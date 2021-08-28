@@ -1,11 +1,10 @@
 # from skimage import io
 # import pandas as pd
-
-path = r'E:/mnist_dataset/mnist_dataset/MNIST/raw/'
-
+import numpy as np
 
 def transfer_byimg_to_vector(img):
-    # size = img.shape[0] * img.shape[1]
+    # 'img' SHOULD BE a 'numpy.ndarray' type
+    # CAN COMPLETE: HOW to deal when 'img' is NOT 'numpy.ndarray' type
     vector = []
     axe_i = 0
     axe_j = 0
@@ -23,9 +22,48 @@ def transfer_byimg_to_vector(img):
     return vector
 
 
+# Here we list the image into 1d directly, without average the layers
 def multimg_to_vector(img):
+    pass
 
+
+def to_vector(img):
+    if type(img) is not np.ndarray:
+        raise RuntimeError("Reading Error, Not an array image.")
+    img_shape = img.shape
+    if len(img_shape) == 3:
+        new_img = []
+        # DEFAULT LAYER NUM IS MIN HERE, NEED REWRITE
+        layer_index = img_shape.index(min(img_shape))
+        if layer_index != 0:
+            img_scale = img_shape[0:layer_index] + img_shape[layer_index+1:]
+        else:
+            img_scale = img_shape[1:]
+        if len(img_scale) == 2:
+            for i in range(0, img_scale[0]):
+                line = []
+                for j in range(0, img_scale[1]):
+                    new_point_value = 0
+                    for k in range(0, img_shape[layer_index]):
+                        if layer_index == 0:
+                            new_point_value += img[k][i][j]
+                        elif layer_index == 1:
+                            new_point_value += img[i][k][j]
+                        else:
+                            new_point_value += img[i][j][k]
+                    line.append(new_point_value)
+                new_img.append(line)
+        elif len(img_shape) != 2:
+            # NEED COMPLETED: how trans when img is a MULTI D shape image
+            pass
+        new_img = np.array(new_img)
+    if len(img_shape) == 2:
+        new_img = img
+    # print("shape:")
+    # print(new_img.shape)
+    vector = transfer_byimg_to_vector(new_img)
     return vector
+
 
 # image = io.imread(path + '0_1k/train/1.jpg')
 # print(image.shape[0])
