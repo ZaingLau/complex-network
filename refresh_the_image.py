@@ -15,6 +15,7 @@ def refresh_the_img(img, degree):
 
 def get_average(img_list):
     # Image in list SHOULD BE vectors, not origin image in ndarray type
+    # A series of img in, under one key
     if img_list is None:
         raise RuntimeError("Average Error: no image in list")
     ave_img = []
@@ -22,7 +23,7 @@ def get_average(img_list):
     for i in range(img_size):
         px_sum = 0
         for j in range(len(img_list)):
-            px_sum += img_size[j][i]
+            px_sum += img_list[j][i]
         px_ave = px_sum / len(img_list)
         ave_img.append(px_ave)
     return ave_img

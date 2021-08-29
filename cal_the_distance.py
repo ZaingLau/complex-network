@@ -22,7 +22,8 @@ def cal_the_other_kinds_of_distance():
     pass
 
 
-def predict(test_image, standard_list, function=["euclidean", "other"]):
+def pred(test_image, standard_list, function=["euclidean", "other"]):
+    # standard list SHOULD BE many labels' average vector
     distance_list = []
     if function == "euclidean":
         for i in range(0, len(standard_list)):
@@ -50,6 +51,27 @@ def predict(test_image, standard_list, function=["euclidean", "other"]):
     return result
 
 
+def predict(test_image, standard_dic, function=["euclidean", "other"]):
+    # 'standard_dic' SHOULD BE a dictionary with labels
+    if test_image is None:
+        raise RuntimeError("predict Error: Test image is None.")
+    elif standard_dic is None:
+        raise RuntimeError("predict Error: No predictable labels.")
+    choice_dic = {}
+    for i in standard_dic.keys():
+        if function == "euclidean":
+            choice_dic[i] = cal_the_euclidean_distance(test_image, standard_dic[i])
+        elif function == "other":
+            print("Haven't been designed")
+            # ADD OTHER FUNCTION
+            # CAN ADD MORE 'elif' FOR MORE FUNCTIONS
+        else:
+            raise RuntimeError("predict Error: No defined function called" + function + ".")
+    result_list = sorted(choice_dic.items(), key=lambda item: item[1])
+    result = result_list[0][0]
+    return result
+
+
 # only used in consecutive image name, if predict several spectacular images, use the function 'predict'
 def make_predict_list(file_time, test_path, start, end, standard_list, function=["euclidean", "other"]):
     time_now = time.strftime("%Y_%m_%d_%H_%M_%S", time.localtime())
@@ -59,7 +81,7 @@ def make_predict_list(file_time, test_path, start, end, standard_list, function=
     for i in range(start, end):
         test_image = io.imread(test_path + str(i) + '.jpg')
         test_image_vector = mark_the_image.transfer_byimg_to_vector(test_image)
-        prediction = predict(test_image_vector, standard_list, function=function)
+        prediction = pred(test_image_vector, standard_list, function=function)
         predict_list.append(prediction)
     df = pd.DataFrame(predict_list)
     df.to_excel("E:/pycharm-program/flex_mnist/result/" + file_time + "/predict/" + time_now + ".xlsx", header=None, index=False)
